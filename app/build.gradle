@@ -1,0 +1,15 @@
+plugins {
+    id 'pl.kmolski.jhttpd.java-application-conventions'
+}
+
+group = 'pl.kmolski'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+dependencies {
+    implementation project(':lib')
+}
+
+application {
+    mainClass = 'pl.kmolski.jhttpd.app.App'
+}
