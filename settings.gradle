@@ -1,2 +1,2 @@
-rootProject.name = 'jHTTPd'
+rootProject.name = 'webserve'
 include('app', 'lib')

@@ -1,15 +1,15 @@
 plugins {
-    id 'pl.kmolski.jhttpd.java-application-conventions'
+    id 'pl.kmolski.webserve.java-application-conventions'
 }
 
 group = 'pl.kmolski'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 dependencies {
     implementation project(':lib')
 }
 
 application {
-    mainClass = 'pl.kmolski.jhttpd.app.App'
+    mainClass = 'pl.kmolski.webserve.app.App'
 }

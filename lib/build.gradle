@@ -1,7 +1,42 @@
 plugins {
-    id 'pl.kmolski.jhttpd.java-library-conventions'
+    id 'pl.kmolski.webserve.java-library-conventions'
+
+    id 'antlr'
+    id 'idea'
 }
 
 group = 'pl.kmolski'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.10.1'
+    implementation 'org.antlr:antlr4-runtime:4.10.1'
+}
+
+generateGrammarSource {
+    maxHeapSize = '128m'
+    arguments += ['-package', 'pl.kmolski.webserve.parser', '-visitor', '-no-listener']
+}
+compileJava.dependsOn generateGrammarSource
+
+sourceSets {
+    generated {
+        java.srcDir 'build/generated-src/antlr/main'
+    }
+}
+compileJava.source sourceSets.generated.java, sourceSets.main.java
+
+clean {
+    delete 'build/generated-src'
+}
+
+idea {
+    module {
+        sourceDirs += file('generated-src/antlr/main')
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
