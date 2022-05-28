@@ -10,6 +10,9 @@ sourceCompatibility = '17'
 dependencies {
     antlr 'org.antlr:antlr4:4.10.1'
     implementation 'org.antlr:antlr4-runtime:4.10.1'
+
+    testImplementation 'org.codehaus.groovy:groovy:3.0.10'
+    testImplementation 'org.spockframework:spock-core:2.1-groovy-3.0'
 }
 
 generateGrammarSource {
@@ -27,12 +30,6 @@ compileJava.source sourceSets.generated.java, sourceSets.main.java
 
 clean {
     delete 'build/generated-src'
-}
-
-idea {
-    module {
-        sourceDirs += file('generated-src/antlr/main')
-    }
 }
 
 test {
