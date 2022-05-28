@@ -1,10 +1,5 @@
 GET / HTTP/1.1
-Line1:   abc
-	def
-          ghi
-		jkl
-  mno
-   qrs
-Connection:
-          close
+Host: google.com
+User-Agent: curl/7.83.0
+Accept: */*
 

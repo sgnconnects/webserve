@@ -1,8 +1,6 @@
 plugins {
     id 'pl.kmolski.webserve.java-library-conventions'
-
     id 'antlr'
-    id 'idea'
 }
 
 group = 'pl.kmolski'
@@ -16,7 +14,7 @@ dependencies {
 
 generateGrammarSource {
     maxHeapSize = '128m'
-    arguments += ['-package', 'pl.kmolski.webserve.parser', '-visitor', '-no-listener']
+    arguments += ['-package', 'pl.kmolski.webserve.http.parser', '-visitor', '-no-listener']
 }
 compileJava.dependsOn generateGrammarSource
 

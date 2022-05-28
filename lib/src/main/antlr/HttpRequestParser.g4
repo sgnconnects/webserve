@@ -8,6 +8,6 @@ fieldName   :                                 TOKEN;
 fieldValue  :           QUOTED_STRING | FIELD_VALUE;
 headerField : fieldName COLON WSP* fieldValue? WSP*;
 
-httpVersion :      Version_NAME DIGIT Version_SEP DIGIT;
-requestLine : METHOD SP ORIGIN_FORM SP httpVersion CRLF;
-httpRequest :      requestLine (headerField CRLF)* CRLF; // message body omitted
+httpVersion : Version_NAME major=DIGIT Version_SEP minor=DIGIT;
+requestLine :        METHOD SP ORIGIN_FORM SP httpVersion CRLF;
+httpRequest :             requestLine (headerField CRLF)* CRLF; // message body omitted
