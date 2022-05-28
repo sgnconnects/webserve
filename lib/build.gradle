@@ -16,8 +16,8 @@ dependencies {
 }
 
 generateGrammarSource {
-    maxHeapSize = '128m'
     arguments += ['-package', 'pl.kmolski.webserve.http.parser', '-visitor', '-no-listener']
+    outputDirectory = new File(buildDir, 'generated-src/antlr/main/pl/kmolski/webserve/http/parser')
 }
 compileJava.dependsOn generateGrammarSource
 

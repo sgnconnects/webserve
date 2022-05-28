@@ -3,7 +3,6 @@ package pl.kmolski.webserve.http.parser;
 import pl.kmolski.webserve.http.HttpRequest;
 import pl.kmolski.webserve.http.HttpRequestMethod;
 import pl.kmolski.webserve.http.parser.HttpRequestParser.*;
-import pl.kmolski.webserve.http.parser.HttpRequestParserBaseVisitor;
 
 import java.net.URI;
 
