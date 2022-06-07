@@ -1,12 +1,14 @@
 package pl.kmolski.webserve.app;
 
-import java.io.BufferedReader;
+import org.antlr.v4.runtime.CodePointBuffer;
+import org.antlr.v4.runtime.CodePointCharStream;
+import pl.kmolski.webserve.http.HttpRequest;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -27,10 +29,9 @@ public class MultiThreadServer {
     public static final byte[] HTTP_NOT_FOUND = "404 Not Found".getBytes();
 
     public static final Logger LOGGER = Logger.getLogger(MultiThreadServer.class.getName());
-    public static final Charset DEFAULT_ENCODING = StandardCharsets.ISO_8859_1;
     public static final Charset SYSTEM_ENCODING = Charset.defaultCharset();
 
-    public static final int MAX_REQUEST_HEADER_SIZE = 8192;
+    public static final int MAX_REQUEST_HEADERS_SIZE = 8192;
 
     public static void main(String[] args) throws IOException {
         var listenSock = new ServerSocket();
@@ -41,27 +42,26 @@ public class MultiThreadServer {
         while (true) {
             var inSock = listenSock.accept();
             var handler = new Thread(() -> {
+                var buffer = ByteBuffer.allocate(MAX_REQUEST_HEADERS_SIZE);
                 try (inSock; var inStream = inSock.getInputStream();
-                     var stream = new BufferedReader(new InputStreamReader(inStream, DEFAULT_ENCODING));
                      var outStream = inSock.getOutputStream()) {
 
+                    var bytesRead = inStream.read(buffer.array());
+                    buffer.limit(bytesRead);
+
                     LOGGER.info("Accepted connection from " + inSock.getInetAddress());
+                    var charStream = CodePointCharStream.fromBuffer(CodePointBuffer.withBytes(buffer));
+                    var request = HttpRequest.fromCharStream(charStream);
 
-                    String[] request = stream.readLine().split(" ");
+                    LOGGER.info("Method: " + request.method());
+                    LOGGER.info("URI: " + request.uri());
+                    LOGGER.info("Protocol: HTTP/" + request.majorVersion() + "." + request.minorVersion());
 
-                    LOGGER.info("Method: " + request[0]);
-                    LOGGER.info("Path: " + request[1]);
-                    LOGGER.info("Protocol: " + request[2]);
+                    LOGGER.info("Request headers: " + request.headers());
 
-                    LOGGER.info("Request headers: ");
-                    while (stream.ready()) {
-                        LOGGER.info(stream.readLine());
-                    }
-
-                    var method = request[0].trim();
-                    switch (method) {
-                        case "GET": {
-                            var requestPath = request[1].trim();
+                    switch (request.method()) {
+                        case GET -> {
+                            var requestPath = request.uri().getPath();
                             var filesystemPath = Paths.get(requestPath.equals("/") ? "index.html" : requestPath);
                             var absPath = Paths.get(".", filesystemPath.toString()).toAbsolutePath();
 
@@ -94,12 +94,8 @@ public class MultiThreadServer {
                             }
 
                             outStream.flush();
-                            break;
                         }
-
-                        default: {
-                            LOGGER.warning("METHOD NOT IMPLEMENTED: " + method);
-                        }
+                        default -> LOGGER.warning("METHOD NOT IMPLEMENTED: " + request.method());
                     }
                 } catch (IOException e) {
                     LOGGER.severe("Error on request: " + e);
