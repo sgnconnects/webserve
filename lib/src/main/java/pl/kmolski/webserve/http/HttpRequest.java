@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public record HttpRequest(HttpRequestMethod method, URI uri,
+public record HttpRequest(HttpMethod method, URI uri,
                           int majorVersion, int minorVersion,
                           Map<String, List<String>> headers) {
 
     public static class Builder {
-        private HttpRequestMethod method;
+        private HttpMethod method;
         private URI uri;
         private int majorVersion;
         private int minorVersion;
@@ -26,27 +26,27 @@ public record HttpRequest(HttpRequestMethod method, URI uri,
             headers = new HttpHeaders<>();
         }
 
-        public Builder setMethod(HttpRequestMethod method) {
+        public Builder method(HttpMethod method) {
             this.method = method;
             return this;
         }
 
-        public Builder setUri(URI uri) {
+        public Builder uri(URI uri) {
             this.uri = uri;
             return this;
         }
 
-        public Builder setMajorVersion(int majorVersion) {
+        public Builder majorVersion(int majorVersion) {
             this.majorVersion = majorVersion;
             return this;
         }
 
-        public Builder setMinorVersion(int minorVersion) {
+        public Builder minorVersion(int minorVersion) {
             this.minorVersion = minorVersion;
             return this;
         }
 
-        public Builder addHeader(String name, String value) {
+        public Builder header(String name, String value) {
             // TODO: Move to HttpHeaders class
             this.headers.compute(name, (key, list) -> {
                 if (list == null) {

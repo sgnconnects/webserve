@@ -1,6 +1,8 @@
-package pl.kmolski.webserve.http
+package pl.kmolski.webserve.http.parser
 
 import org.antlr.v4.runtime.CharStreams
+import pl.kmolski.webserve.http.HttpRequest
+import pl.kmolski.webserve.http.HttpMethod
 import spock.lang.Specification
 
 import static pl.kmolski.webserve.http.HttpProtocolConstants.REQUEST_ENCODING
@@ -18,7 +20,7 @@ class HttpRequestParserSpecification extends Specification {
         def request = requestFromFile("post_example.http")
 
         then:
-        request.method() == HttpRequestMethod.POST
+        request.method() == HttpMethod.POST
         request.uri().toString() == "/url?sa=t&source=web&rct=j&url=https://zh.wikipedia.org/zh-hans/111&ved=2ahUKEwjhwLuRtbjiAhUPRK0KHRSjDpwQFjAKegQIAxAB"
         request.headers().get("Host").contains("www.google.com.hk")
         request.headers().get("Connection").contains("close")

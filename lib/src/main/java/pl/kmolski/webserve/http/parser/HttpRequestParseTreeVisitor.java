@@ -1,7 +1,7 @@
 package pl.kmolski.webserve.http.parser;
 
 import pl.kmolski.webserve.http.HttpRequest;
-import pl.kmolski.webserve.http.HttpRequestMethod;
+import pl.kmolski.webserve.http.HttpMethod;
 import pl.kmolski.webserve.http.parser.HttpRequestParser.*;
 
 import java.net.URI;
@@ -19,7 +19,7 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
         visitChildren(ctx);
         var headerName = ctx.fieldName().getText();
         var headerValue = ctx.fieldValue().getText();
-        return builder.addHeader(headerName, headerValue);
+        return builder.header(headerName, headerValue);
     }
 
     @Override
@@ -27,14 +27,14 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
         visitChildren(ctx);
         var majorVersion = Integer.parseInt(ctx.major.getText());
         var minorVersion = Integer.parseInt(ctx.minor.getText());
-        return builder.setMajorVersion(majorVersion).setMinorVersion(minorVersion);
+        return builder.majorVersion(majorVersion).minorVersion(minorVersion);
     }
 
     @Override
     public HttpRequest.Builder visitRequestLine(RequestLineContext ctx) {
         visitChildren(ctx);
-        var method = HttpRequestMethod.valueOf(ctx.METHOD().getText());
+        var method = HttpMethod.valueOf(ctx.METHOD().getText());
         var requestUri = URI.create(ctx.ORIGIN_FORM().getText());
-        return builder.setMethod(method).setUri(requestUri);
+        return builder.method(method).uri(requestUri);
     }
 }

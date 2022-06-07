@@ -1,6 +1,6 @@
 package pl.kmolski.webserve.http;
 
-public enum HttpRequestMethod {
+public enum HttpMethod {
     GET,
     HEAD,
     POST,
