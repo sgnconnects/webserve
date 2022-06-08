@@ -29,7 +29,7 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
                 var withoutQuotes = valueRawText.substring(1, valueRawText.length() - 1);
                 yield withoutQuotes.replaceAll("\\\\(.)", "$1");
             }
-            case FIELD_VALUE -> valueRawText.replaceAll("[\t ]*\r\n[\t ]+", "");
+            case FIELD_VALUE -> valueRawText;
             default -> throw new IllegalStateException("Unexpected token: " + valueToken.getType());
         };
         return builder.header(headerName, headerValue);

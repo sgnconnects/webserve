@@ -23,13 +23,13 @@ class HttpRequestParserSpecification extends Specification {
 
     def "when the HTTP message is parsed, then it matches the expected request object"() {
         when:
-        def actual = requestFromHttpFile("${requestFilePrefix}.http")
-        def expected = requestFromJsonFile("${requestFilePrefix}.json")
+        def actual = requestFromHttpFile("valid/${requestFilePrefix}.http")
+        def expected = requestFromJsonFile("valid/${requestFilePrefix}.json")
 
         then:
         actual == expected
 
         where:
-        requestFilePrefix << ["post_example", "post_example2"]
+        requestFilePrefix << ["complex", "no_headers", "quoted_headers"]
     }
 }

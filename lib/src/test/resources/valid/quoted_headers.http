@@ -1,0 +1,7 @@
+POST / HTTP/1.1
+Host: google.com
+User-Agent: curl/7.83.0
+Quoted-Header: "foobaz"
+Quoted-Escaped-Header: "foo\\\ \	\"bar"
+Accept: */*
+

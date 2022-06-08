@@ -6,7 +6,8 @@
   "headers": {
     "Host": ["google.com"],
     "User-Agent": ["curl/7.83.0"],
-    "Quoted-Header": ["foo\\ \t\"bar"],
+    "Quoted-Header": ["foobaz"],
+    "Quoted-Escaped-Header": ["foo\\ \t\"bar"],
     "Accept": ["*/*"]
   }
 }

@@ -2,8 +2,8 @@ parser grammar HttpRequestParser;
 
 options { tokenVocab = HttpRequestLexer; }
 
-// Request header rules defined in RFC 7230, section 3:
-// https://datatracker.ietf.org/doc/html/rfc7230#section-3
+// Request header rules defined in RFC 9110, section 5:
+// https://datatracker.ietf.org/doc/html/rfc9110#section-5
 fieldName   :                                 TOKEN;
 fieldValue  :    text=(QUOTED_STRING | FIELD_VALUE);
 headerField : fieldName COLON WSP* fieldValue? WSP*;
