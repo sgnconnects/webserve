@@ -1,6 +1,5 @@
-#
-# https://help.github.com/articles/dealing-with-line-endings/
-#
-# These are explicitly windows files and should use crlf
+# These are explicitly windows files and should use CRLF
 *.bat           text eol=crlf
 
+# HTTP requests use CRLF as line breaks
+*.http          text eol=crlf
