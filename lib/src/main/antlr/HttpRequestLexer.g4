@@ -1,9 +1,10 @@
 lexer grammar HttpRequestLexer;
 
 METHOD : ('GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH') -> pushMode(URI);
+
 Version_CRLF : CRLF -> type(CRLF), pushMode(Header);
-Version_NAME : 'HTTP/';
-Version_SEP  : '.';
+Version_NAME :                              'HTTP/';
+Version_SEP  :                                  '.';
 
 // Core rules defined in RFC 5234, appendix B.1:
 // https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1

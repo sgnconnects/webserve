@@ -6,6 +6,9 @@ import pl.kmolski.webserve.http.parser.HttpRequestParser.*;
 
 import java.net.URI;
 
+import static pl.kmolski.webserve.http.parser.HttpRequestLexer.FIELD_VALUE;
+import static pl.kmolski.webserve.http.parser.HttpRequestLexer.QUOTED_STRING;
+
 public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<HttpRequest.Builder> {
 
     private final HttpRequest.Builder builder;
@@ -18,7 +21,17 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
     public HttpRequest.Builder visitHeaderField(HeaderFieldContext ctx) {
         visitChildren(ctx);
         var headerName = ctx.fieldName().getText();
-        var headerValue = ctx.fieldValue().getText();
+
+        var valueToken = ctx.fieldValue().text;
+        var valueRawText = valueToken.getText();
+        var headerValue = switch (valueToken.getType()) {
+            case QUOTED_STRING -> {
+                var withoutQuotes = valueRawText.substring(1, valueRawText.length() - 1);
+                yield withoutQuotes.replaceAll("\\\\(.)", "$1");
+            }
+            case FIELD_VALUE -> valueRawText.replaceAll("[\t ]*\r\n[\t ]+", "");
+            default -> throw new IllegalStateException("Unexpected token: " + valueToken.getType());
+        };
         return builder.header(headerName, headerValue);
     }
 
