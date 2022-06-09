@@ -18,13 +18,13 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
     }
 
     @Override
-    public HttpRequest.Builder visitHeaderField(HeaderFieldContext ctx) {
+    public HttpRequest.Builder visitField(FieldContext ctx) {
         visitChildren(ctx);
-        var headerName = ctx.fieldName().getText();
+        var fieldName = ctx.fieldName().getText();
 
         var valueToken = ctx.fieldValue().text;
         var valueRawText = valueToken.getText();
-        var headerValue = switch (valueToken.getType()) {
+        var fieldValue = switch (valueToken.getType()) {
             case QUOTED_STRING -> {
                 var withoutQuotes = valueRawText.substring(1, valueRawText.length() - 1);
                 yield withoutQuotes.replaceAll("\\\\(.)", "$1");
@@ -32,7 +32,7 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
             case FIELD_VALUE -> valueRawText;
             default -> throw new IllegalStateException("Unexpected token: " + valueToken.getType());
         };
-        return builder.header(headerName, headerValue);
+        return builder.field(fieldName, fieldValue);
     }
 
     @Override

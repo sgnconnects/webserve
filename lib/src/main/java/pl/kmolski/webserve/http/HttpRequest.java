@@ -13,17 +13,17 @@ import java.util.Map;
 
 public record HttpRequest(HttpMethod method, URI uri,
                           int majorVersion, int minorVersion,
-                          Map<String, List<String>> headers) {
+                          Map<String, List<String>> fields) {
 
     public static class Builder {
         private HttpMethod method;
         private URI uri;
         private int majorVersion;
         private int minorVersion;
-        private final Map<String, List<String>> headers;
+        private final Map<String, List<String>> fields;
 
         public Builder() {
-            headers = new HttpHeaders<>();
+            fields = new HttpFields<>();
         }
 
         public Builder method(HttpMethod method) {
@@ -46,9 +46,9 @@ public record HttpRequest(HttpMethod method, URI uri,
             return this;
         }
 
-        public Builder header(String name, String value) {
-            // TODO: Move to HttpHeaders class
-            this.headers.compute(name, (key, list) -> {
+        public Builder field(String name, String value) {
+            // TODO: Move to HttpFields class
+            this.fields.compute(name, (key, list) -> {
                 if (list == null) {
                     var newList = new ArrayList<String>();
                     newList.add(value);
@@ -62,7 +62,7 @@ public record HttpRequest(HttpMethod method, URI uri,
         }
 
         public HttpRequest build() {
-            return new HttpRequest(method, uri, majorVersion, minorVersion, headers);
+            return new HttpRequest(method, uri, majorVersion, minorVersion, fields);
         }
     }
 

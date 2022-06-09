@@ -2,9 +2,9 @@ lexer grammar HttpRequestLexer;
 
 METHOD : ('GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH') -> pushMode(URI);
 
-Version_CRLF : CRLF -> type(CRLF), pushMode(Header);
-Version_NAME :                              'HTTP/';
-Version_SEP  :                                  '.';
+Version_CRLF : CRLF -> type(CRLF), pushMode(Field);
+Version_NAME :                             'HTTP/';
+Version_SEP  :                                 '.';
 
 // Core rules defined in RFC 5234, appendix B.1:
 // https://datatracker.ietf.org/doc/html/rfc5234#appendix-B.1
@@ -34,18 +34,18 @@ fragment UNRESERVED    :                         ALPHA | DIGIT | [-.~_];
 fragment SUB_DELIMS    :                                  [!$&'()*+,;=];
 fragment HEXDIG        :                                  DIGIT | [A-F];
 
-// Header rules defined in RFC 9110, section 5 - Fields:
+// Field rules defined in RFC 9110, section 5 - Fields:
 // https://datatracker.ietf.org/doc/html/rfc9110#section-5
-mode Header;
+mode Field;
 
-TOKEN       :                       TCHAR+;
-COLON       : ':' -> pushMode(HeaderValue);
-Header_CRLF :           CRLF -> type(CRLF);
+TOKEN      :                      TCHAR+;
+COLON      : ':' -> pushMode(FieldValue);
+Field_CRLF :          CRLF -> type(CRLF);
 
 fragment TCHAR : ALPHA | DIGIT | [-&`^$!#.|+%'*~_];
 
 
-mode HeaderValue;
+mode FieldValue;
 
 QUOTED_STRING : DQUOTE (QDTEXT | QUOTED_PAIR)* DQUOTE -> popMode;
 FIELD_VALUE   :                        FIELD_CONTENT+ -> popMode;

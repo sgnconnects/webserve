@@ -3,5 +3,5 @@
   "uri": "//wikipedia.org:1234",
   "majorVersion": 1,
   "minorVersion": 0,
-  "headers": {}
+  "fields": {}
 }

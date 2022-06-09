@@ -3,7 +3,7 @@
   "uri": "/url?sa=t&source=web&rct=j&url=https://zh.wikipedia.org/zh-hans/111&ved=2ahUKEwjhwLuRtbjiAhUPRK0KHRSjDpwQFjAKegQIAxAB",
   "majorVersion": 1,
   "minorVersion": 1,
-  "headers": {
+  "fields": {
     "Host": ["www.google.com.hk"],
     "Connection": ["close"],
     "Content-Length": ["4"],

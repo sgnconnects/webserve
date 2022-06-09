@@ -56,8 +56,7 @@ public class MultiThreadServer {
                     LOGGER.info("Method: " + request.method());
                     LOGGER.info("URI: " + request.uri());
                     LOGGER.info("Protocol: HTTP/" + request.majorVersion() + "." + request.minorVersion());
-
-                    LOGGER.info("Request headers: " + request.headers());
+                    LOGGER.info("Request fields: " + request.fields());
 
                     switch (request.method()) {
                         case GET -> {
@@ -73,7 +72,6 @@ public class MultiThreadServer {
                                 var mimeType = Files.probeContentType(absPath); // TODO: cache mime type later
                                 outStream.write("Content-Type: ".getBytes());
                                 outStream.write((mimeType != null ? mimeType : "text/plain").getBytes());
-                                outStream.write('\n');
                                 outStream.write(CHARSET_ID);
 
                                 outStream.write(("Content-Length: " + absPath.toFile().length()).getBytes());

@@ -3,7 +3,7 @@
   "uri": "/",
   "majorVersion": 1,
   "minorVersion": 1,
-  "headers": {
+  "fields": {
     "Host": ["google.com"],
     "User-Agent": ["curl/7.83.0"],
     "Quoted-Header": ["foobaz"],
