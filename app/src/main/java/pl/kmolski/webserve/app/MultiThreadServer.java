@@ -11,7 +11,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +35,8 @@ public class MultiThreadServer {
     public static final int MAX_REQUEST_HEADERS_SIZE = 8192;
 
     public static void main(String[] args) throws IOException {
+        var serverRoot = Path.of(".").normalize().toAbsolutePath();
+        var threadPool = Executors.newFixedThreadPool(100);
         var listenSock = new ServerSocket();
         listenSock.bind(new InetSocketAddress("::1", 8080));
 
@@ -41,7 +44,7 @@ public class MultiThreadServer {
 
         while (true) {
             var inSock = listenSock.accept();
-            var handler = new Thread(() -> {
+            threadPool.submit(() -> {
                 var buffer = ByteBuffer.allocate(MAX_REQUEST_HEADERS_SIZE);
                 try (inSock; var inStream = inSock.getInputStream();
                      var outStream = inSock.getOutputStream()) {
@@ -53,16 +56,14 @@ public class MultiThreadServer {
                     var charStream = CodePointCharStream.fromBuffer(CodePointBuffer.withBytes(buffer));
                     var request = HttpRequest.fromCharStream(charStream);
 
-                    LOGGER.info("Method: " + request.method());
-                    LOGGER.info("URI: " + request.uri());
-                    LOGGER.info("Protocol: HTTP/" + request.majorVersion() + "." + request.minorVersion());
-                    LOGGER.info("Request fields: " + request.fields());
-
                     switch (request.method()) {
                         case GET -> {
-                            var requestPath = request.uri().getPath();
-                            var filesystemPath = Paths.get(requestPath.equals("/") ? "index.html" : requestPath);
-                            var absPath = Paths.get(".", filesystemPath.toString()).toAbsolutePath();
+                            var requestPath = request.uri().getPath().replaceFirst("^/", "");
+                            var filesystemPath = Path.of(requestPath.isBlank() ? "index.html" : requestPath);
+                            var absPath = serverRoot.resolve(filesystemPath).normalize().toAbsolutePath();
+                            if (!absPath.startsWith(serverRoot)) {
+                                throw new RuntimeException("No path traversal for you!");
+                            }
 
                             outStream.write(HTTP_VERSION_ID);
                             try (var fileStream = Files.newInputStream(absPath)) {
@@ -99,7 +100,6 @@ public class MultiThreadServer {
                     LOGGER.severe("Error on request: " + e);
                 }
             });
-            handler.start();
         }
     }
 }
