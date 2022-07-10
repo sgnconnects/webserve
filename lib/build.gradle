@@ -11,6 +11,9 @@ dependencies {
     antlr 'org.antlr:antlr4:4.10.1'
     implementation 'org.antlr:antlr4-runtime:4.10.1'
 
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
 }
 

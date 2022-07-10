@@ -1,24 +1,27 @@
 package pl.kmolski.webserve.http.parser;
 
-import pl.kmolski.webserve.http.HttpRequest;
+import lombok.RequiredArgsConstructor;
 import pl.kmolski.webserve.http.HttpMethod;
+import pl.kmolski.webserve.http.HttpRequest.HttpRequestBuilder;
 import pl.kmolski.webserve.http.parser.HttpRequestParser.*;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static pl.kmolski.webserve.http.parser.HttpRequestLexer.FIELD_VALUE;
 import static pl.kmolski.webserve.http.parser.HttpRequestLexer.QUOTED_STRING;
 
-public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<HttpRequest.Builder> {
+@RequiredArgsConstructor
+public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<HttpRequestBuilder> {
 
-    private final HttpRequest.Builder builder;
-
-    public HttpRequestParseTreeVisitor(HttpRequest.Builder builder) {
-        this.builder = builder;
-    }
+    private final HttpRequestBuilder builder;
+    private final Map<String, List<String>> fields = new HashMap<>();
 
     @Override
-    public HttpRequest.Builder visitField(FieldContext ctx) {
+    public HttpRequestBuilder visitField(FieldContext ctx) {
         visitChildren(ctx);
         var fieldName = ctx.fieldName().getText();
 
@@ -32,11 +35,21 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
             case FIELD_VALUE -> valueRawText;
             default -> throw new IllegalStateException("Unexpected token: " + valueToken.getType());
         };
-        return builder.field(fieldName, fieldValue);
+        fields.compute(fieldName, (key, list) -> {
+            if (list == null) {
+                var newList = new ArrayList<String>();
+                newList.add(fieldValue);
+                return newList;
+            } else {
+                list.add(fieldValue);
+                return list;
+            }
+        });
+        return builder.fields(fields);
     }
 
     @Override
-    public HttpRequest.Builder visitHttpVersion(HttpVersionContext ctx) {
+    public HttpRequestBuilder visitHttpVersion(HttpVersionContext ctx) {
         visitChildren(ctx);
         var majorVersion = Integer.parseInt(ctx.major.getText());
         var minorVersion = Integer.parseInt(ctx.minor.getText());
@@ -44,7 +57,7 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
     }
 
     @Override
-    public HttpRequest.Builder visitRequestLine(RequestLineContext ctx) {
+    public HttpRequestBuilder visitRequestLine(RequestLineContext ctx) {
         visitChildren(ctx);
         var method = HttpMethod.valueOf(ctx.METHOD().getText());
         var requestUri = URI.create(ctx.ORIGIN_FORM().getText());

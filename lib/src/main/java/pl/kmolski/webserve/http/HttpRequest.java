@@ -1,5 +1,6 @@
 package pl.kmolski.webserve.http;
 
+import lombok.Builder;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import pl.kmolski.webserve.http.parser.HttpRequestLexer;
@@ -7,64 +8,13 @@ import pl.kmolski.webserve.http.parser.HttpRequestParseTreeVisitor;
 import pl.kmolski.webserve.http.parser.HttpRequestParser;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Builder
 public record HttpRequest(HttpMethod method, URI uri,
                           int majorVersion, int minorVersion,
                           Map<String, List<String>> fields) {
-
-    public static class Builder {
-        private HttpMethod method;
-        private URI uri;
-        private int majorVersion;
-        private int minorVersion;
-        private final Map<String, List<String>> fields;
-
-        public Builder() {
-            fields = new HttpFields<>();
-        }
-
-        public Builder method(HttpMethod method) {
-            this.method = method;
-            return this;
-        }
-
-        public Builder uri(URI uri) {
-            this.uri = uri;
-            return this;
-        }
-
-        public Builder majorVersion(int majorVersion) {
-            this.majorVersion = majorVersion;
-            return this;
-        }
-
-        public Builder minorVersion(int minorVersion) {
-            this.minorVersion = minorVersion;
-            return this;
-        }
-
-        public Builder field(String name, String value) {
-            // TODO: Move to HttpFields class
-            this.fields.compute(name, (key, list) -> {
-                if (list == null) {
-                    var newList = new ArrayList<String>();
-                    newList.add(value);
-                    return newList;
-                } else {
-                    list.add(value);
-                    return list;
-                }
-            });
-            return this;
-        }
-
-        public HttpRequest build() {
-            return new HttpRequest(method, uri, majorVersion, minorVersion, fields);
-        }
-    }
 
     public static HttpRequestParser getParser(CharStream charStream) {
         var lexer = new HttpRequestLexer(charStream);
@@ -76,7 +26,7 @@ public record HttpRequest(HttpMethod method, URI uri,
         var parser = getParser(charStream);
         var parserContext = parser.httpRequest();
 
-        var builder = new HttpRequest.Builder();
+        var builder = new HttpRequestBuilder();
         var visitor = new HttpRequestParseTreeVisitor(builder);
 
         visitor.visit(parserContext);
