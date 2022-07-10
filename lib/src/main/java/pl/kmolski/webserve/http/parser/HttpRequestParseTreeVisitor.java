@@ -1,6 +1,7 @@
 package pl.kmolski.webserve.http.parser;
 
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.tree.ParseTree;
 import pl.kmolski.webserve.http.HttpMethod;
 import pl.kmolski.webserve.http.HttpRequest.HttpRequestBuilder;
 import pl.kmolski.webserve.http.parser.HttpRequestParser.*;
@@ -35,6 +36,7 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
             case FIELD_VALUE -> valueRawText;
             default -> throw new IllegalStateException("Unexpected token: " + valueToken.getType());
         };
+
         fields.compute(fieldName, (key, list) -> {
             if (list == null) {
                 var newList = new ArrayList<String>();
@@ -45,7 +47,7 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
                 return list;
             }
         });
-        return builder.fields(fields);
+        return builder;
     }
 
     @Override
@@ -62,5 +64,11 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
         var method = HttpMethod.valueOf(ctx.METHOD().getText());
         var requestUri = URI.create(ctx.ORIGIN_FORM().getText());
         return builder.method(method).uri(requestUri);
+    }
+
+    @Override
+    public HttpRequestBuilder visit(ParseTree tree) {
+        builder.fields(fields);
+        return super.visit(tree);
     }
 }
