@@ -23,7 +23,7 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
 
     @Override
     public HttpRequestBuilder visitField(FieldContext ctx) {
-        visitChildren(ctx);
+        this.visitChildren(ctx);
         var fieldName = ctx.fieldName().getText();
 
         var valueToken = ctx.fieldValue().text;
@@ -37,7 +37,8 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
             default -> throw new IllegalStateException("Unexpected token: " + valueToken.getType());
         };
 
-        fields.compute(fieldName, (key, list) -> {
+        this.fields.computeIfAbsent(fieldName, __ -> new ArrayList<>()).add(fieldValue);
+        this.fields.compute(fieldName, (key, list) -> {
             if (list == null) {
                 var newList = new ArrayList<String>();
                 newList.add(fieldValue);
@@ -47,28 +48,28 @@ public class HttpRequestParseTreeVisitor extends HttpRequestParserBaseVisitor<Ht
                 return list;
             }
         });
-        return builder;
+        return this.builder;
     }
 
     @Override
     public HttpRequestBuilder visitHttpVersion(HttpVersionContext ctx) {
-        visitChildren(ctx);
+        this.visitChildren(ctx);
         var majorVersion = Integer.parseInt(ctx.major.getText());
         var minorVersion = Integer.parseInt(ctx.minor.getText());
-        return builder.majorVersion(majorVersion).minorVersion(minorVersion);
+        return this.builder.majorVersion(majorVersion).minorVersion(minorVersion);
     }
 
     @Override
     public HttpRequestBuilder visitRequestLine(RequestLineContext ctx) {
-        visitChildren(ctx);
+        this.visitChildren(ctx);
         var method = HttpMethod.valueOf(ctx.METHOD().getText());
         var requestUri = URI.create(ctx.ORIGIN_FORM().getText());
-        return builder.method(method).uri(requestUri);
+        return this.builder.method(method).uri(requestUri);
     }
 
     @Override
     public HttpRequestBuilder visit(ParseTree tree) {
-        builder.fields(fields);
+        this.builder.fields(this.fields);
         return super.visit(tree);
     }
 }

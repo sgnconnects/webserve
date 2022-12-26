@@ -2,7 +2,8 @@ package pl.kmolski.webserve.http;
 
 import lombok.Builder;
 import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.CommonTokenFactory;
+import org.antlr.v4.runtime.UnbufferedTokenStream;
 import pl.kmolski.webserve.http.parser.HttpRequestLexer;
 import pl.kmolski.webserve.http.parser.HttpRequestParseTreeVisitor;
 import pl.kmolski.webserve.http.parser.HttpRequestParser;
@@ -18,12 +19,14 @@ public record HttpRequest(HttpMethod method, URI uri,
 
     public static HttpRequestParser getParser(CharStream charStream) {
         var lexer = new HttpRequestLexer(charStream);
-        var tokenStream = new CommonTokenStream(lexer);
+        lexer.setTokenFactory(new CommonTokenFactory(true));
+
+        var tokenStream = new UnbufferedTokenStream<>(lexer);
         return new HttpRequestParser(tokenStream);
     }
 
     public static HttpRequest fromCharStream(CharStream charStream) {
-        var parser = getParser(charStream);
+        var parser = HttpRequest.getParser(charStream);
         var parserContext = parser.httpRequest();
 
         var builder = new HttpRequestBuilder();
