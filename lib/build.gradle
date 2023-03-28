@@ -14,7 +14,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 }
 
 generateGrammarSource {
