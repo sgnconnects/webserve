@@ -4,6 +4,11 @@ updates:
     directory: "/app"
     schedule:
       interval: "weekly"
+      
+  - package-ecosystem: "gradle"
+    directory: "/buildSrc"
+    schedule:
+      interval: "weekly"
 
   - package-ecosystem: "gradle"
     directory: "/lib"
