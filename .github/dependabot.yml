@@ -6,7 +6,7 @@ updates:
       interval: "weekly"
       
   - package-ecosystem: "gradle"
-    directory: "/buildSrc"
+    directory: "/buildSrc/src/main/groovy"
     schedule:
       interval: "weekly"
 
