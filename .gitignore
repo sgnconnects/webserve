@@ -1,12 +1,10 @@
-# Ignore Gradle project-specific cache directory
-.gradle
+# Gradle cache/output directories
+.gradle/
+build/
 
-# Ignore Gradle build output directory
-build
+# IntelliJ IDEA data directory
+.idea/
 
-# Ignore IntelliJ IDEA data directory
-.idea
-
-# Ignore directories created by ANTLR plguin for IntelliJ
+# ANTLR-generated sources
 lib/src/main/antlr/gen/
 lib/src/main/gen/
