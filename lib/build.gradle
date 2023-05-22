@@ -9,7 +9,7 @@ sourceCompatibility = '17'
 
 dependencies {
     antlr 'org.antlr:antlr4:4.12.0'
-    implementation 'org.antlr:antlr4-runtime:4.12.0'
+    implementation 'org.antlr:antlr4-runtime:4.13.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
